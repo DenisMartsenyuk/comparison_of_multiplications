@@ -57,8 +57,6 @@ void MultiplicationMatricesGPU::setWorkGroupAndWorkItems(int rowsWorkGroup, int 
                                                          int columnsMatrix) {
     int rowsWorkItems = ceil(rowsMatrix * 1.0 / rowsWorkGroup) * rowsWorkGroup;
     int columnsWorkItems = ceil(columnsMatrix * 1.0 / columnsWorkGroup) * columnsWorkGroup;
-    std::cout << "rowsWorkItems: " << rowsWorkItems << std::endl;
-    std::cout << "columnsWorkItems: " << columnsWorkItems << std::endl;
     workItems = cl::NDRange(rowsWorkItems, columnsWorkItems);
     workGroup = cl::NDRange(rowsWorkGroup, columnsWorkGroup);
 }

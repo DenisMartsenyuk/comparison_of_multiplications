@@ -3,7 +3,7 @@ project(comparison_of_multiplications)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(comparison_of_multiplications main.cpp matrices/MatrixOperations.cpp matrices/MatrixOperations.h gpu/MultiplicationMatricesGPU.cpp gpu/MultiplicationMatricesGPU.h config.h)
+add_executable(comparison_of_multiplications main.cpp matrices/MatrixOperations.h gpu/MultiplicationMatricesGPU.cpp gpu/MultiplicationMatricesGPU.h config.h)
 
 find_package(OpenCL REQUIRED)
 include_directories(${OpenCL_INCLUDE_DIRS})

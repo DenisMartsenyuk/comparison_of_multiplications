@@ -59,6 +59,7 @@ void MultiplicationMatricesGPU::setArgs(T *matrixA, T *matrixB, int rows,
     createBuffersAndQueue<T>(rows, columns, generalSize);
     queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, sizeof(T) * rows * generalSize, &matrixA[0]);
     queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, sizeof(T) * generalSize * columns, &matrixB[0]);
+    queue.finish();
     kernel.setArg(0, bufferA);
     kernel.setArg(1, bufferB);
     kernel.setArg(2, bufferResult);
@@ -70,7 +71,8 @@ void MultiplicationMatricesGPU::setArgs(T *matrixA, T *matrixB, int rows,
 
 template<class T>
 void MultiplicationMatricesGPU::getResult(T *matrixResult, int rows, int columns) {
-    queue.enqueueReadBuffer(bufferResult, CL_TRUE, 0, sizeof(float) * rows * columns, &matrixResult[0]);
+    queue.enqueueReadBuffer(bufferResult, CL_TRUE, 0, sizeof(T) * rows * columns, &matrixResult[0]);
+    queue.finish();
 }
 
 
