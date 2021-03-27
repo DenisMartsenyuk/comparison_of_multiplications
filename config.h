@@ -7,14 +7,16 @@
 
 #define NUMBER_OF_MEASUREMENTS 10
 
-#define ROWS 32
-#define COLUMNS 32
-#define GENERAL_SIZE 32
+#define ROWS 16
+#define COLUMNS 16
+#define GENERAL_SIZE 16
 
 #define DEVICE_NUMBER 2
 #define PATH_TO_KERNEL_FILE "/Users/mega_user/Desktop/GPU /comparison_of_multiplications/kernels/kernel.cl"
 #define WORK_GROUP_ROWS 16
 #define WORK_GROUP_COLUMNS 16
+#define THEORETICAL_PERFORMANCE_FLOAT 1.306
+#define THEORETICAL_PERFORMANCE_DOUBLE 81.60
 
 #define NAME_KERNEL_1 "simple_multiplication_float"
 #define TYPE_KERNEL_1 "float"

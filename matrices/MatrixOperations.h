@@ -42,7 +42,7 @@ bool MatrixOperations::compareMatrices(T *matrixA, T *matrixB, int rows, int col
     int counter = 0;
     for(int i = 0; i < rows; i++) {
         for(int j = 0; j < columns; j++) {
-            if (abs(matrixA[i * columns + j] - matrixB[i * columns + j]) <= 0.000001) {
+            if (abs(matrixA[i * columns + j] - matrixB[i * columns + j]) <= 0.00000001) {
                 counter ++;
             }
         }

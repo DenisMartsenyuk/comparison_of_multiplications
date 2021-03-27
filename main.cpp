@@ -70,6 +70,11 @@ int main() {
 
     for (int i = 0; i < resultGFLOPS.size(); ++i) {
         std::cout << resultGFLOPS[i].first << " average value GFLOPS: " << resultGFLOPS[i].second / NUMBER_OF_MEASUREMENTS << std::endl;
+        if (kernels[i].first == "float") {
+            std::cout << "Percentage of theoretical performance: " << THEORETICAL_PERFORMANCE_FLOAT / 100.0 * resultGFLOPS[i].second / NUMBER_OF_MEASUREMENTS  << " %" << std::endl;
+        } else if (kernels[i].first == "double") {
+            std::cout << "Percentage of theoretical performance: " << THEORETICAL_PERFORMANCE_DOUBLE / 100.0 * resultGFLOPS[i].second / NUMBER_OF_MEASUREMENTS  << " %" << std::endl;
+        }
     }
 
     return 0;
