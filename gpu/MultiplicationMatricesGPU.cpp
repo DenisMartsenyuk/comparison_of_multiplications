@@ -57,6 +57,8 @@ void MultiplicationMatricesGPU::setWorkGroupAndWorkItems(int rowsWorkGroup, int 
                                                          int columnsMatrix) {
     int rowsWorkItems = ceil(rowsMatrix * 1.0 / rowsWorkGroup) * rowsWorkGroup;
     int columnsWorkItems = ceil(columnsMatrix * 1.0 / columnsWorkGroup) * columnsWorkGroup;
+    std::cout << "rowsWorkItems: " << rowsWorkItems << std::endl;
+    std::cout << "columnsWorkItems: " << columnsWorkItems << std::endl;
     workItems = cl::NDRange(rowsWorkItems, columnsWorkItems);
     workGroup = cl::NDRange(rowsWorkGroup, columnsWorkGroup);
 }
@@ -65,35 +67,15 @@ void MultiplicationMatricesGPU::setKernel(std::string nameKernel) {
     kernel = cl::Kernel(program, nameKernel.c_str());
 }
 
-void MultiplicationMatricesGPU::createBuffersAndQueue(int rows, int columns, int generalSize) {
-    bufferA = cl::Buffer(context, CL_MEM_READ_ONLY, sizeof(float) * rows * generalSize);
-    bufferB = cl::Buffer(context, CL_MEM_READ_ONLY, sizeof(float) * generalSize * columns);
-    bufferResult = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(float) * rows * columns);
-    queue = cl::CommandQueue(context, device);
-}
-
-void MultiplicationMatricesGPU::setArgs(float *matrixA, float *matrixB, int rows,
-                                        int columns, int generalSize) {
-    createBuffersAndQueue(rows, columns, generalSize);
-    cl_int errcode;
-    errcode = queue.enqueueWriteBuffer(bufferA, CL_TRUE, 0, sizeof(float) * rows * generalSize, &matrixA[0]);
-    errcode |= queue.enqueueWriteBuffer(bufferB, CL_TRUE, 0, sizeof(float) * generalSize * columns, &matrixB[0]);
-    errcode |= kernel.setArg(0, bufferA);
-    errcode |= kernel.setArg(1, bufferB);
-    errcode |= kernel.setArg(2, bufferResult);
-    errcode |= kernel.setArg(3, sizeof(int), &rows);
-    errcode |= kernel.setArg(4, sizeof(int), &columns);
-    errcode |= kernel.setArg(5, sizeof(int), &generalSize);
-
-}
-
 void MultiplicationMatricesGPU::executeKernel() {
-    cl_int errcode;
-    errcode |= queue.enqueueNDRangeKernel(kernel, cl::NullRange, workItems,  workGroup); //todo убрать ошибки
-    errcode |= queue.finish();
+    queue.enqueueNDRangeKernel(kernel, cl::NullRange, workItems,  workGroup, NULL, &event);
+    queue.finish();
 }
 
-void MultiplicationMatricesGPU::getResult(float *matrixResult, int rows, int columns) {
-    cl_int errcode;
-    errcode |= queue.enqueueReadBuffer(bufferResult, CL_TRUE, 0, sizeof(float) * rows * columns, &matrixResult[0]);
+double MultiplicationMatricesGPU::getExecutionTime() {
+    cl_ulong startTime;
+    cl_ulong finishTime;
+    event.getProfilingInfo(CL_PROFILING_COMMAND_START, &startTime);
+    event.getProfilingInfo(CL_PROFILING_COMMAND_END, &finishTime);
+    return (finishTime - startTime) / 1000000.0;
 }

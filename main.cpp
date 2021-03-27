@@ -12,6 +12,8 @@ int main() {
     float *resultKernel1 = (float*)malloc(ROWS * COLUMNS * sizeof(float));
     float *resultKernel2 = (float*)malloc(ROWS * COLUMNS * sizeof(float));
 
+    double gFlopsVariable = (ROWS * COLUMNS * GENERAL_SIZE * 2) * 1.0 / (1000 * 1000 * 1000);
+
     MultiplicationMatricesGPU multiplicationMatricesGpu = MultiplicationMatricesGPU();
     multiplicationMatricesGpu.init(DEVICE_NUMBER);
     multiplicationMatricesGpu.setProgram(PATH_TO_KERNEL_FILE);
@@ -31,13 +33,15 @@ int main() {
         std::cout << "CPU multiplication time: " << executionTimeMillis << " milliseconds" << std::endl;
 
         multiplicationMatricesGpu.setKernel(NAME_KERNEL_1);
-        multiplicationMatricesGpu.setArgs(a, b, ROWS, COLUMNS, GENERAL_SIZE);
+        multiplicationMatricesGpu.setArgs<float>(a, b, ROWS, COLUMNS, GENERAL_SIZE);
         startTime = std::chrono::high_resolution_clock::now();
         multiplicationMatricesGpu.executeKernel();
         finishTime = std::chrono::high_resolution_clock::now();
         executionTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finishTime - startTime).count();
         executionTimeMillis = executionTime / 1e6;
-        std::cout << "GPU kernel 1 multiplication time: " << executionTimeMillis << " milliseconds" << std::endl;
+        std::cout << "GPU kernel 1 multiplication time: " << executionTimeMillis << " milliseconds (chrono)" << std::endl;
+        std::cout << "GPU kernel 1 multiplication time: " << multiplicationMatricesGpu.getExecutionTime() << " milliseconds (profiler)" << std::endl;
+        std::cout << "GPU kernel 1 GFLOPS: " << gFlopsVariable / (multiplicationMatricesGpu.getExecutionTime() / 1000) << std::endl;
         multiplicationMatricesGpu.getResult(resultKernel1, ROWS, COLUMNS);
         if (MatrixOperations::compareMatrices(resultCPU, resultKernel1, ROWS, COLUMNS)) {
             std::cout << "Calculation in " << NAME_KERNEL_1 << " is correct." << std::endl;
@@ -45,21 +49,21 @@ int main() {
             std::cout << "Calculation in " << NAME_KERNEL_1 << " is incorrect." << std::endl;
         }
 
-        multiplicationMatricesGpu.setKernel(NAME_KERNEL_2);
-        multiplicationMatricesGpu.setArgs(a, b, ROWS, COLUMNS, GENERAL_SIZE);
-        startTime = std::chrono::high_resolution_clock::now();
-        multiplicationMatricesGpu.executeKernel();
-        finishTime = std::chrono::high_resolution_clock::now();
-        executionTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finishTime - startTime).count();
-        executionTimeMillis = executionTime / 1e6;
-        std::cout << "GPU kernel 2 multiplication time: " << executionTimeMillis << " milliseconds" << std::endl;
-        multiplicationMatricesGpu.getResult(resultKernel2, ROWS, COLUMNS);
-        if (MatrixOperations::compareMatrices(resultCPU, resultKernel2, ROWS, COLUMNS)) {
-            std::cout << "Calculation in " << NAME_KERNEL_2 << " is correct." << std::endl;
-        } else {
-            std::cout << "Calculation in " << NAME_KERNEL_2 << " is incorrect." << std::endl;
-        }
-
+//        multiplicationMatricesGpu.setKernel(NAME_KERNEL_2);
+//        multiplicationMatricesGpu.setArgs(a, b, ROWS, COLUMNS, GENERAL_SIZE);
+//        startTime = std::chrono::high_resolution_clock::now();
+//        multiplicationMatricesGpu.executeKernel();
+//        finishTime = std::chrono::high_resolution_clock::now();
+//        executionTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finishTime - startTime).count();
+//        executionTimeMillis = executionTime / 1e6;
+//        std::cout << "GPU kernel 2 multiplication time: " << executionTimeMillis << " milliseconds" << std::endl;
+//        multiplicationMatricesGpu.getResult(resultKernel2, ROWS, COLUMNS);
+//        if (MatrixOperations::compareMatrices(resultCPU, resultKernel2, ROWS, COLUMNS)) {
+//            std::cout << "Calculation in " << NAME_KERNEL_2 << " is correct." << std::endl;
+//        } else {
+//            std::cout << "Calculation in " << NAME_KERNEL_2 << " is incorrect." << std::endl;
+//        }
+//
         multiplicationMatricesGpu.setKernel(NAME_KERNEL_1);
         multiplicationMatricesGpu.setArgs(a, b, ROWS, COLUMNS, GENERAL_SIZE);
         startTime = std::chrono::high_resolution_clock::now();
@@ -67,7 +71,9 @@ int main() {
         finishTime = std::chrono::high_resolution_clock::now();
         executionTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finishTime - startTime).count();
         executionTimeMillis = executionTime / 1e6;
-        std::cout << "GPU kernel 1 multiplication time: " << executionTimeMillis << " milliseconds" << std::endl;
+        std::cout << "GPU kernel 1 multiplication time: " << executionTimeMillis << " milliseconds (chrono)" << std::endl;
+        std::cout << "GPU kernel 1 multiplication time: " << multiplicationMatricesGpu.getExecutionTime() << " milliseconds (profiler)" << std::endl;
+        std::cout << "GPU kernel 1 GFLOPS: " << gFlopsVariable / (multiplicationMatricesGpu.getExecutionTime() / 1000) << std::endl;
         multiplicationMatricesGpu.getResult(resultKernel1, ROWS, COLUMNS);
         if (MatrixOperations::compareMatrices(resultCPU, resultKernel1, ROWS, COLUMNS)) {
             std::cout << "Calculation in " << NAME_KERNEL_1 << " is correct." << std::endl;

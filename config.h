@@ -5,7 +5,7 @@
 #ifndef COMPARISON_OF_MULTIPLICATIONS_CONFIG_H
 #define COMPARISON_OF_MULTIPLICATIONS_CONFIG_H
 
-#define NUMBER_OF_MEASUREMENTS 5
+#define NUMBER_OF_MEASUREMENTS 1
 
 #define ROWS 512
 #define COLUMNS 512
@@ -16,7 +16,7 @@
 #define WORK_GROUP_ROWS 16
 #define WORK_GROUP_COLUMNS 16
 
-#define NAME_KERNEL_1 "simple_multiplication"
-#define NAME_KERNEL_2 "optimization_1_multiplication"
+#define NAME_KERNEL_1 "simple_multiplication_float"
+#define NAME_KERNEL_2 "optimization_1_multiplication_float"
 
 #endif //COMPARISON_OF_MULTIPLICATIONS_CONFIG_H
