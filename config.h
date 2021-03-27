@@ -5,11 +5,11 @@
 #ifndef COMPARISON_OF_MULTIPLICATIONS_CONFIG_H
 #define COMPARISON_OF_MULTIPLICATIONS_CONFIG_H
 
-#define NUMBER_OF_MEASUREMENTS 5
+#define NUMBER_OF_MEASUREMENTS 10
 
-#define ROWS 512
-#define COLUMNS 512
-#define GENERAL_SIZE 512
+#define ROWS 32
+#define COLUMNS 32
+#define GENERAL_SIZE 32
 
 #define DEVICE_NUMBER 2
 #define PATH_TO_KERNEL_FILE "/Users/mega_user/Desktop/GPU /comparison_of_multiplications/kernels/kernel.cl"

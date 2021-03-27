@@ -1,11 +1,10 @@
 #include <iostream>
-#include <chrono>
 #include "matrices/MatrixOperations.h"
 #include "config.h"
 #include "gpu/MultiplicationMatricesGPU.h"
 
 template <class T>
-void test(MultiplicationMatricesGPU *multiplicationMatricesGpu, std::pair<std::string, std::string> *kernel, T *a, T *b, T *resultCPU, T *resultKernel) {
+double test(MultiplicationMatricesGPU *multiplicationMatricesGpu, std::pair<std::string, std::string> *kernel, T *a, T *b, T *resultCPU, T *resultKernel) {
     double gFlopsVariable = (ROWS * COLUMNS * GENERAL_SIZE * 2) * 1.0 / (1000 * 1000 * 1000);
 
     MatrixOperations::generateMatrix(a, ROWS, GENERAL_SIZE);
@@ -23,6 +22,8 @@ void test(MultiplicationMatricesGPU *multiplicationMatricesGpu, std::pair<std::s
     } else {
         std::cout << "Calculation in " << kernel->second << " is incorrect." << std::endl;
     }
+
+    return gFlopsVariable / (multiplicationMatricesGpu->getExecutionTime() / 1000);
 }
 
 int main() {
@@ -38,6 +39,12 @@ int main() {
     multiplicationMatricesGpu.setProgram(PATH_TO_KERNEL_FILE);
     multiplicationMatricesGpu.setWorkGroupAndWorkItems(WORK_GROUP_ROWS, WORK_GROUP_COLUMNS, ROWS, COLUMNS);
 
+    std::vector<std::pair<std::string, double>> resultGFLOPS;
+    resultGFLOPS.push_back(std::make_pair(NAME_KERNEL_1, 0.0));
+    resultGFLOPS.push_back(std::make_pair(NAME_KERNEL_2, 0.0));
+    resultGFLOPS.push_back(std::make_pair(NAME_KERNEL_3, 0.0));
+    resultGFLOPS.push_back(std::make_pair(NAME_KERNEL_4, 0.0));
+
     for (int i = 0; i < NUMBER_OF_MEASUREMENTS; ++i) {
         std::cout << "Test " << i + 1 << std::endl;
 
@@ -47,17 +54,22 @@ int main() {
                 double *b = (double*)malloc( GENERAL_SIZE * COLUMNS * sizeof(double));
                 double *resultCPU = (double*)malloc(ROWS * COLUMNS * sizeof(double));
                 double *resultKernel = (double*)malloc(ROWS * COLUMNS * sizeof(double));
-                test(&multiplicationMatricesGpu, &kernels[j], a, b, resultCPU, resultKernel);
-            } else {
+                resultGFLOPS[j].second += test(&multiplicationMatricesGpu, &kernels[j], a, b, resultCPU, resultKernel);
+            } else if(kernels[j].first == "float") {
                 float *a = (float*)malloc(ROWS * GENERAL_SIZE * sizeof(float));
                 float *b = (float*)malloc( GENERAL_SIZE * COLUMNS * sizeof(float));
                 float *resultCPU = (float*)malloc(ROWS * COLUMNS * sizeof(float));
                 float *resultKernel = (float*)malloc(ROWS * COLUMNS * sizeof(float));
-                test(&multiplicationMatricesGpu, &kernels[j], a, b, resultCPU, resultKernel);
+                resultGFLOPS[j].second += test(&multiplicationMatricesGpu, &kernels[j], a, b, resultCPU, resultKernel);
             }
+            std::cout << std::endl;
         }
 
-        std::cout << std::endl;
+        std::cout << std::endl << std::endl;
+    }
+
+    for (int i = 0; i < resultGFLOPS.size(); ++i) {
+        std::cout << resultGFLOPS[i].first << " average value GFLOPS: " << resultGFLOPS[i].second / NUMBER_OF_MEASUREMENTS << std::endl;
     }
 
     return 0;

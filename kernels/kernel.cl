@@ -1,7 +1,6 @@
 #define BLOCK_SIZE 16
 
-__kernel void simple_multiplication_float( __global float* matrix_a, __global float* matrix_b, __global float* result, const int rows, const int columns, const int general_size)
-{
+__kernel void simple_multiplication_float( __global float* matrix_a, __global float* matrix_b, __global float* result, const int rows, const int columns, const int general_size) {
     int row = get_global_id(0);
     int col = get_global_id(1);
 
@@ -15,8 +14,7 @@ __kernel void simple_multiplication_float( __global float* matrix_a, __global fl
     result[row * columns + col] = sum;
 }
 
-__kernel void optimization_1_multiplication_float(__global float* matrix_a, __global float* matrix_b, __global float* result, const int rows, const int columns, const int general_size)
-{
+__kernel void optimization_1_multiplication_float(__global float* matrix_a, __global float* matrix_b, __global float* result, const int rows, const int columns, const int general_size) {
     int x = get_global_id(0);
     int y = get_global_id(1);
     int x_in_block = get_local_id(0);
@@ -40,23 +38,21 @@ __kernel void optimization_1_multiplication_float(__global float* matrix_a, __gl
     result[general_size * y + x] = sum;
 }
 
-__kernel void simple_multiplication_double( __global double* matrix_a, __global double* matrix_b, __global double* result, const int rows, const int columns, const int general_size)
-{
+__kernel void simple_multiplication_double( __global double* matrix_a, __global double* matrix_b, __global double* result, const int rows, const int columns, const int general_size) {
     int row = get_global_id(0);
     int col = get_global_id(1);
 
     if (row >= rows || col >= columns) {
         return;
     }
-    double sum = 0;
+    double sum = 0.0;
     for (int i = 0; i < general_size; i++) {
         sum += matrix_a[row * general_size + i] * matrix_b[i * columns + col];
     }
     result[row * columns + col] = sum;
 }
 
-__kernel void optimization_1_multiplication_double(__global double* matrix_a, __global double* matrix_b, __global double* result, const int rows, const int columns, const int general_size)
-{
+__kernel void optimization_1_multiplication_double(__global double* matrix_a, __global double* matrix_b, __global double* result, const int rows, const int columns, const int general_size) {
     int x = get_global_id(0);
     int y = get_global_id(1);
     int x_in_block = get_local_id(0);
