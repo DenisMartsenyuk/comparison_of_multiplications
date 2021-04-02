@@ -45,7 +45,7 @@ __kernel void simple_multiplication_double( __global double* matrix_a, __global 
     if (row >= rows || col >= columns) {
         return;
     }
-    double sum = 0.0;
+    double sum = 0;
     for (int i = 0; i < general_size; i++) {
         sum += matrix_a[row * general_size + i] * matrix_b[i * columns + col];
     }

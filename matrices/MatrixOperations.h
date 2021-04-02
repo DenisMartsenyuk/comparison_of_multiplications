@@ -42,12 +42,12 @@ bool MatrixOperations::compareMatrices(T *matrixA, T *matrixB, int rows, int col
     int counter = 0;
     for(int i = 0; i < rows; i++) {
         for(int j = 0; j < columns; j++) {
-            if (abs(matrixA[i * columns + j] - matrixB[i * columns + j]) <= 0.00000001) {
-                counter ++;
+            if (abs(matrixA[i * columns + j] - matrixB[i * columns + j]) > 0.001) {
+                return false;
             }
         }
     }
-    return counter == rows * columns;
+    return true;
 }
 
 template<class T>
