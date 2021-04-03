@@ -5,6 +5,8 @@
 #include <iostream>
 #include "MultiplicationMatricesGPU.h"
 
+//#define CL_CHECK(error) if (error) {std::cout << "Error in line: " << __LINE__ << std::endl; exit(1)}; //todo сделать
+
 int MultiplicationMatricesGPU::init(int deviceNumber) {
     std::vector<cl::Platform> platforms;
     cl::Platform::get(&platforms);
@@ -57,7 +59,7 @@ void MultiplicationMatricesGPU::setWorkGroupAndWorkItems(int rowsWorkGroup, int 
                                                          int columnsMatrix) {
     int rowsWorkItems = ceil(rowsMatrix * 1.0 / rowsWorkGroup) * rowsWorkGroup;
     int columnsWorkItems = ceil(columnsMatrix * 1.0 / columnsWorkGroup) * columnsWorkGroup;
-    workItems = cl::NDRange(rowsWorkItems, columnsWorkItems);
+    workItems = cl::NDRange(rowsWorkItems, columnsWorkItems); //todo мб поменять местами
     workGroup = cl::NDRange(rowsWorkGroup, columnsWorkGroup);
 }
 

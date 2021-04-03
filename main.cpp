@@ -12,6 +12,9 @@ double test(MultiplicationMatricesGPU *multiplicationMatricesGpu, std::pair<std:
     if (MatrixOperations::compareMatrices(resultReference, resultKernel, ROWS, COLUMNS)) {
         return multiplicationMatricesGpu->getExecutionTime();
     }
+    MatrixOperations::printMatrix(resultReference, ROWS, COLUMNS);
+    std::cout << std::endl;
+    MatrixOperations::printMatrix(resultKernel, ROWS, COLUMNS);
     return -1.0;
 }
 
@@ -40,11 +43,21 @@ void printTestResult(int numberTest, std::vector<std::pair<std::string, std::vec
 
 int main() {
 
+    double *aDouble = (double*)malloc(ROWS * GENERAL_SIZE * sizeof(double));
+    double *bDouble = (double*)malloc( GENERAL_SIZE * COLUMNS * sizeof(double));
+    double *resultDoubleReference = (double*)malloc(ROWS * COLUMNS * sizeof(double));
+    double *resultDoubleKernel = (double*)malloc(ROWS * COLUMNS * sizeof(double));
+
+    float *aFloat = (float*)malloc(ROWS * GENERAL_SIZE * sizeof(float));
+    float *bFloat = (float*)malloc( GENERAL_SIZE * COLUMNS * sizeof(float));
+    float *resultFloatReference = (float*)malloc(ROWS * COLUMNS * sizeof(float));
+    float *resultFloatKernel = (float*)malloc(ROWS * COLUMNS * sizeof(float));
+
     std::vector<std::pair<std::string, std::string>> kernels;
     kernels.emplace_back(TYPE_KERNEL_1, NAME_KERNEL_1);
     kernels.emplace_back(TYPE_KERNEL_2, NAME_KERNEL_2);
-    kernels.emplace_back(TYPE_KERNEL_3, NAME_KERNEL_3);
-    kernels.emplace_back(TYPE_KERNEL_4, NAME_KERNEL_4);
+//    kernels.emplace_back(TYPE_KERNEL_3, NAME_KERNEL_3);
+//    kernels.emplace_back(TYPE_KERNEL_4, NAME_KERNEL_4);
 
 
     MultiplicationMatricesGPU multiplicationMatricesGpu = MultiplicationMatricesGPU();
@@ -61,22 +74,14 @@ int main() {
         resultTime.emplace_back(NAME_KERNEL_4, std::vector<double> {});
         for (int j = 0; j < kernels.size(); ++j) {
             if (kernels[j].first == "double") {
-                double *a = (double*)malloc(ROWS * GENERAL_SIZE * sizeof(double));
-                double *b = (double*)malloc( GENERAL_SIZE * COLUMNS * sizeof(double));
-                double *resultReference = (double*)malloc(ROWS * COLUMNS * sizeof(double));
-                double *resultKernel = (double*)malloc(ROWS * COLUMNS * sizeof(double));
-                createTestData(&multiplicationMatricesGpu, NAME_REFERENCE_KERNEL_DOUBLE, a, b, resultReference);
+                createTestData(&multiplicationMatricesGpu, NAME_REFERENCE_KERNEL_DOUBLE, aDouble, bDouble, resultDoubleReference);
                 for (int k = 0; k < NUMBER_OF_IDENTICAL_MEASUREMENTS; ++k) {
-                    resultTime[j].second.push_back(test(&multiplicationMatricesGpu, &kernels[j], a, b, resultReference, resultKernel));
+                    resultTime[j].second.push_back(test(&multiplicationMatricesGpu, &kernels[j], aDouble, bDouble, resultDoubleReference, resultDoubleKernel));
                 }
             } else if(kernels[j].first == "float") {
-                float *a = (float*)malloc(ROWS * GENERAL_SIZE * sizeof(float));
-                float *b = (float*)malloc( GENERAL_SIZE * COLUMNS * sizeof(float));
-                float *resultReference = (float*)malloc(ROWS * COLUMNS * sizeof(float));
-                float *resultKernel = (float*)malloc(ROWS * COLUMNS * sizeof(float));
-                createTestData(&multiplicationMatricesGpu, NAME_REFERENCE_KERNEL_FLOAT, a, b, resultReference);
+                createTestData(&multiplicationMatricesGpu, NAME_REFERENCE_KERNEL_FLOAT, aFloat, bFloat, resultFloatReference);
                 for (int k = 0; k < NUMBER_OF_IDENTICAL_MEASUREMENTS; ++k) {
-                    resultTime[j].second.push_back(test(&multiplicationMatricesGpu, &kernels[j], a, b, resultReference, resultKernel));
+                    resultTime[j].second.push_back(test(&multiplicationMatricesGpu, &kernels[j], aFloat, bFloat, resultFloatReference, resultFloatKernel));
                 }
             }
         }
